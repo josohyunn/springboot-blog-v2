@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * save(), findById(), findAll(), count(), deleteById()
  */
 
-public interface BoardRepository extends JpaRepository<Board, Integer> {
+// JpaRepository가 Board.class를 찾아서 알아서 매핑해준다.
+// findById하면 pk로 알아서 찾아서 매핑해줌
+public interface BoardRepository extends JpaRepository<Board, Integer> { // Integer은 pk의 타입
 
 }
