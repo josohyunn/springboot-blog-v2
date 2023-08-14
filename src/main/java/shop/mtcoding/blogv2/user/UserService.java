@@ -4,9 +4,11 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
+import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
 
 // 핵심로직 처리, 트랜잭션 관리, 예외 처리
 @Service
@@ -59,5 +61,20 @@ public class UserService {
 
         // }
     }
+
+    public User 회원정보보기(Integer id) {
+        return userRepository.findById(id).get(); // Optional로 return되기 때문에 .get()해주는 것
+    }
+
+    @Transactional // 안붙이면 flush가 안된다.
+    public User 회원수정(UpdateDTO updateDTO, Integer id) {
+        // 1. 조회(영속화)
+        User user = userRepository.findById(id).get();
+
+        // 2. 변경
+        user.setPassword(updateDTO.getPassword());
+
+        return user;
+    } // 3. flush
 
 }

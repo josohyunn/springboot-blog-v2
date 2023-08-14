@@ -1,5 +1,6 @@
 package shop.mtcoding.blogv2.user;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,24 @@ public class UserController {
         // request는 응답이 되면 비어지고, session은 유지가 되기 때문
         session.setAttribute("sessionUser", sessionUser);
         return Script.href("/");
+    }
+
+    @GetMapping("/user/updateForm")
+    public String updateForm(HttpServletRequest request) {
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        User user = userService.회원정보보기(sessionUser.getId());
+        request.setAttribute("user", user);
+        return "user/updateForm";
+    }
+
+    @PostMapping("/user/update")
+    public String update(UserRequest.UpdateDTO updateDTO) {
+        // 1. 회원 수정(서비스)
+        // 2. 세션동기화
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        User user = userService.회원수정(updateDTO, sessionUser.getId());
+        session.setAttribute("sessionUser", user); // 세션을 동기화 시켜줌
+        return "redirect:/";
     }
 
 }
