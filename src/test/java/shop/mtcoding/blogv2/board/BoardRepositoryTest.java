@@ -1,8 +1,17 @@
 package shop.mtcoding.blogv2.board;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import shop.mtcoding.blogv2.user.User;
 
@@ -11,6 +20,44 @@ public class BoardRepositoryTest {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Test
+    public void findAll_paging_test() throws JsonProcessingException {
+        Pageable pageable = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+        Page<Board> boardPG = boardRepository.findAll(pageable);
+        ObjectMapper om = new ObjectMapper();
+
+        // ObjectMapper는 boardPG객체의 getter를 호출하면서 json을 만든다.
+        String json = om.writeValueAsString(boardPG); // 자바객체를 JSON으로 변환. LAZY라 여기서 오류남
+        System.out.println(json);
+    }
+
+    @Test
+    public void findAll_test() {
+        System.out.println("조회 직전");
+        List<Board> boardList = boardRepository.findAll(); // jpa n+1
+        // 행 : 5개 -> 객체 : 5개
+        // lazy일 때 각행 : Board (id=1, title=제목1, content=내용1, created_at=날짜, User(id=1))
+        System.out.println("조회 후 : LAZY");
+        System.out.println(boardList.get(0).getId()); // 1번(조회x)
+        System.out.println(boardList.get(0).getUser().getId()); // 1번(조회x)
+
+        // Lazy Loading - 지연 로딩(=지연해서 select를 발동시킨다. -> 쓸데없는 조회 안일어남)
+        // 연관된 객체에 null을 참조하려고 하면 조회가 일어난다.(조회o)
+        // user_id(외래키)를 조회할 때에는 null이 아니기 때문에 user객체의 select가 일어나지 않는다.
+        System.out.println(boardList.get(0).getUser().getUsername()); // lazy이기 때문에 username은 null이지만
+        // hibernate가 user객체에서 땡겨와서 ssar을 출력해준다.
+
+        // eager과 lazy의 차이점 :
+        // eager을 쓰면 화면에 필요없는 데이터까지 조회하더라
+        // lazy는 그렇지 않기 때문에 쿼리를 효율적으로 사용할 수 있고, 필요할 때만 데이터를 가져와서 쓸 수 있더라
+
+    }
+
+    @Test
+    public void mFindAll_test() {
+        boardRepository.mFindAll();
+    }
 
     @Test
     public void save_test() {
