@@ -13,6 +13,13 @@ public class BoardRequest { // 모든 요청DTO를 내부클래스로 만든다.
         private String content;
     }
 
+    @Getter
+    @Setter
+    public static class UpdateDTO { // SaveDTO와 똑같은 구조지만, 유지보수성을 위해 따로 만드는 것
+        private String title;
+        private String content;
+    }
+
     // public static void main(String[] args) {
     // SaveDTO saveDTO = new BoardRequest.SaveDTO();
     // saveDTO.title = "제목";

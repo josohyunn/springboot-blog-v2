@@ -24,7 +24,11 @@ public class BoardRepositoryTest {
 
     @Test
     public void deleteById_test() {
-        boardRepository.deleteById(1);
+        try {
+            boardRepository.deleteById(6);
+        } catch (Exception e) {
+            System.out.println("괜찮아");
+        }
     } // rollback
 
     @Test

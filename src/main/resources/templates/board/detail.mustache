@@ -2,7 +2,9 @@
 
 <div class="container p-5">
   <!-- 수정삭제버튼 -->
-  <!-- mustache의 {{}}안에 있는 변수들은 request에 있는 변수를 꺼내쓰는 것 -->
+  <!-- mustache의 {}{}안에 있는 변수들은 request에 있는 변수를 꺼내쓰는 것 -->
+  <!-- {}{}의 해석은 톰켓에서 한다. -> 자바코드이기 때문에 브라우저가 해석하지 못한다. -->
+  <!-- server side rendering은 request에 값이 담겨있어야 사용할 수 있다. -->
   <div class="d-flex justify-content-end">
     <a class="btn btn-warning me-1" href="/board/{{ board.id }}/updateForm"
       >수정</a

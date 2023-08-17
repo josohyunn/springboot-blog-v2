@@ -1,6 +1,7 @@
 package shop.mtcoding.blogv2.board;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.mtcoding.blogv2.board.BoardRequest.UpdateDTO;
 import shop.mtcoding.blogv2.user.User;
 
 /*
@@ -42,14 +44,37 @@ public class BoardService {
 
     public Board 상세보기(Integer id) {
         // board만 가져오면 된다.
-        return boardRepository.findById(id).get();
-        // get()메서드는 Optional 타입에서 값을 가져오는 메서드
+        Optional<Board> boardOP = boardRepository.findById(id);
+        if (boardOP.isPresent()) {
+            return boardOP.get(); // get()메서드는 Optional 타입에서 값을 가져오는 메서드
+        } else {
+            throw new RuntimeException(id + "는 찾을 수 없습니다.");
+        }
 
     }
 
     @Transactional
     public void 삭제하기(Integer id) {
-        boardRepository.deleteById(id);
+        try {
+            boardRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("6번은 없어요"); // id가 6이면
+        }
+
+    }
+
+    @Transactional
+    public void 게시글수정하기(Integer id, BoardRequest.UpdateDTO updateDTO) {
+        Optional<Board> boardOP = boardRepository.findById(id);
+        if (boardOP.isPresent()) {
+            Board board = boardOP.get();
+            board.setTitle(updateDTO.getTitle());
+            board.setContent(updateDTO.getContent());
+        } else {
+            throw new RuntimeException(id + "는 찾을 수 없습니다.");
+        }
+        // flush(더티체킹)
+
     }
 
 }
