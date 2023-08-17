@@ -20,6 +20,13 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
+    @PostMapping("/board/{id}/delete")
+    public String delete(@PathVariable Integer id) {
+        boardService.삭제하기(id);
+        return "redirect:/"; // index안하는 이유 : index.mustache에는 request에 있는 것을 꺼내 쓰기 때문에
+        // index하면 request에 담긴 데이터들이 없기 때문에 mustache에서 못써서 오류가 나는 것
+    }
+
     @GetMapping("/board/{id}")
     public String detail(@PathVariable Integer id, Model model) { // request대신 Model로 담을수도 있다. 똑같은 것
         Board board = boardService.상세보기(id);

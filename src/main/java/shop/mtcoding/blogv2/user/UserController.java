@@ -70,7 +70,7 @@ public class UserController {
     public String updateForm(HttpServletRequest request) {
         User sessionUser = (User) session.getAttribute("sessionUser");
         User user = userService.회원정보보기(sessionUser.getId());
-        request.setAttribute("user", user);
+        request.setAttribute("user", user); // request에 "user" 키워드에 user값을 넣는 것
         return "user/updateForm";
     }
 

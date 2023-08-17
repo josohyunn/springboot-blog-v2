@@ -43,7 +43,13 @@ public class BoardService {
     public Board 상세보기(Integer id) {
         // board만 가져오면 된다.
         return boardRepository.findById(id).get();
+        // get()메서드는 Optional 타입에서 값을 가져오는 메서드
 
+    }
+
+    @Transactional
+    public void 삭제하기(Integer id) {
+        boardRepository.deleteById(id);
     }
 
 }

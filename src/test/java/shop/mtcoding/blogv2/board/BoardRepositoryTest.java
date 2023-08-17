@@ -23,6 +23,11 @@ public class BoardRepositoryTest {
     private BoardRepository boardRepository;
 
     @Test
+    public void deleteById_test() {
+        boardRepository.deleteById(1);
+    } // rollback
+
+    @Test
     public void findById_test() {
 
         // EAGER이면 join해서 select해줌
