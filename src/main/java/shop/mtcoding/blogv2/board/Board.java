@@ -21,6 +21,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import shop.mtcoding.blogv2.user.User;
 
+// 엔티티 : 테이블이랑 똑같이 생긴 자바 객체
+// 엔티티 = 터베이스테이블 = 릴레이션
 @NoArgsConstructor
 @Setter
 @Getter

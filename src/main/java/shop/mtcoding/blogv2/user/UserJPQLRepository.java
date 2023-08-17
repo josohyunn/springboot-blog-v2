@@ -11,7 +11,7 @@ public interface UserJPQLRepository extends JpaRepository<User, Integer> {
     // executeQuery
     // @Param하면 바인딩 알아서 해줌
     @Query(value = "select u from User u where u.id = :id") // 객체 이름 대문자 확인하기
-    Optional<User> mFindById(@Param("id") Integer id); // Optional로 리ㅓㄴ해줌
+    Optional<User> mFindById(@Param("id") Integer id); // Optional로 리턴해줌
 
     // executeQuery
     @Query(value = "select u from User u where u.username = :username")

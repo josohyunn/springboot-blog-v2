@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Integer> { // JPA의 첫번째 인자인 User형태로 리턴받아야 한다.
 
     // executeQuery
     // @Param하면 바인딩 알아서 해줌

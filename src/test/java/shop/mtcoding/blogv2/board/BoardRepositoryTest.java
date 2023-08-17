@@ -1,6 +1,7 @@
 package shop.mtcoding.blogv2.board;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,22 @@ public class BoardRepositoryTest {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Test
+    public void findById_test() {
+
+        // EAGER이면 join해서 select해줌
+        // LAZY면 연관된 객체의 정보가 필요할 때만 연관된 객체를 select해줌
+        // findAll에서는 join이 필요가 없어서 LAZY로 해놨는데
+        // findById에서는 user정보가 필요하게 돼서 username을 꺼내게 되면 select가 두번 일어난다.
+        // 그보다는 직접 join쿼리를 짜서 select를 한번만 하는게 낫다.
+        Optional<Board> boardOP = boardRepository.findById(5);
+        if (boardOP.isPresent()) { // Board가 존재하면(null 안전성 제공)
+            System.out.println("테스트 : board가 있습니다.");
+            Board board = boardOP.get();
+            board.getUser().getEmail(); // LazyLoading
+        }
+    }
 
     @Test
     public void findAll_paging_test() throws JsonProcessingException {

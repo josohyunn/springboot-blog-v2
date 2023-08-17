@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * JpaRepository에 들어가있는 것들 :
@@ -20,9 +21,12 @@ public interface BoardRepository extends JpaRepository<Board, Integer> { // Inte
     // inner join user_tb u on b.user_id = u.id;
     // fetch를 붙여야 전체를 조회(*)한다.
     // fetch를 안하면 board정보와 user의 id만 프로젝션 한다.
-    // ---> user까지 select 하기 때문에 모든 게시물(board)쿼리, 각 게시물에 대한 사용자정보(User)쿼리,
+    // ---> user까지 select 하기 때문에 모든 게시물(Board)쿼리, 각 게시물에 대한 사용자정보(User)쿼리,
     // 위의 각 사용자 정보(User)쿼리로 총 3번의 쿼리가 나타나므로 n+1 쿼리 문제가 발생한다.
     // 하지만 fetch를 붙이면 한번의 쿼리로 연관된 객체인 user의 정보들까지 가져온다.
-    @Query("select b from Board b join fetch b.user") // 위랑 똑같은데 jpql로 만든 것(jpql은 그냥 inner join이 디폴트)
+    @Query("select b from Board b join fetch b.user") // 맨 위 주석이랑 똑같은데 jpql로 만든 것(jpql은 그냥 inner join이 디폴트)
     List<Board> mFindAll();
+
+    @Query("select b from Board b join fetch b.user where b.id = :id")
+    Board mFindById(@Param("id") Integer id);
 }
