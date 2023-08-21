@@ -25,7 +25,7 @@ public class BoardController {
         boardService.게시글수정하기(id, updateDTO); // body(DTO), where 데이터, session 보통 3개의 데이터를 넘겨줌
         // 순서는 상관없지만 일관성이 깨질 수 있으므로 컨벤션으로 where데이터, body데이터, session의 순으로 날리자
         // 컨벤션은 회사마다 다를 수 있음
-        return "redirect:/board/" + id;
+        return "redirect:/board/"; //+ id
     }
 
     @GetMapping("/board/{id}/updateForm")
