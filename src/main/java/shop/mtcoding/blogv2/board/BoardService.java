@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.mtcoding.blogv2._core.error.ex.MyException;
 import shop.mtcoding.blogv2.board.BoardRequest.UpdateDTO;
 import shop.mtcoding.blogv2.user.User;
 
@@ -44,11 +45,13 @@ public class BoardService {
 
     public Board 상세보기(Integer id) {
         // board만 가져오면 된다.
-        Optional<Board> boardOP = boardRepository.findById(id);
+        Optional<Board> boardOP = boardRepository.mFindByIdJoinRepliesInUser(id);
         if (boardOP.isPresent()) {
             return boardOP.get(); // get()메서드는 Optional 타입에서 값을 가져오는 메서드
         } else {
-            throw new RuntimeException(id + "는 찾을 수 없습니다.");
+            throw new MyException(id + "는 찾을 수 없습니다.");
+            // MyException인지 MyApiException인지는 호출한 함수를 보면 ajax통신인지 아닌지 보면 된다.
+            // api가 안붙어있어 ajax통신이 아니기 때문에 MyException을 throw날리면 된다.
         }
 
     }
@@ -58,7 +61,7 @@ public class BoardService {
         try {
             boardRepository.deleteById(id);
         } catch (Exception e) {
-            throw new RuntimeException("6번은 없어요"); // id가 6이면
+            throw new MyException("6번은 없어요"); // id가 6이면
         }
 
     }
@@ -71,7 +74,7 @@ public class BoardService {
             board.setTitle(updateDTO.getTitle());
             board.setContent(updateDTO.getContent());
         } else {
-            throw new RuntimeException(id + "는 찾을 수 없습니다.");
+            throw new MyException(id + "는 찾을 수 없습니다.");
         }
         // flush(더티체킹)
 

@@ -1,6 +1,7 @@
 package shop.mtcoding.blogv2.board;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +30,13 @@ public interface BoardRepository extends JpaRepository<Board, Integer> { // Inte
 
     @Query("select b from Board b join fetch b.user where b.id = :id")
     Board mFindById(@Param("id") Integer id);
+    
+    // jpql(객체지향 쿼리)
+    // 이렇게 하면 dto가 필요없다.
+    // fetch : 프로젝션 
+    // select b from Board b join fetch b.replies r join fetch r.user ru where b.id = :id 이렇게만 하면 자동으로 inner join이 날라가기 때문에 
+    // board와 reply사이에는 left outer join을 해줘야 한다.
+    // reply와 user사이도 마찬가지
+    @Query("select b from Board b left join fetch b.replies r left join fetch r.user ru where b.id = :id") // 화면에 보이는것만 join하고 나중에 필요하면 하면됨
+    Optional<Board> mFindByIdJoinRepliesInUser(@Param("id") Integer id); // 전체 lazy로 하고 직접 쿼리 작성
 }

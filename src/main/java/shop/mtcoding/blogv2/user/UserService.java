@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import shop.mtcoding.blogv2._core.error.ex.MyException;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
 import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
@@ -35,12 +36,12 @@ public class UserService {
         // 1. 유저네임 검증
         // if는 걸러내듯이 틀린것 작성하면 가독성 좋음
         if (user == null) {
-            return null;
+            throw new MyException("유저 네임이 없습니다.");
         }
 
         // 2. 패스워드 검증
         if (!user.getPassword().equals(loginDTO.getPassword())) {
-            return null;
+            throw new MyException("패스워드를 잘못 입력하였습니다.");
         }
 
         // 3. 로그인 성공

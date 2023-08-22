@@ -20,6 +20,9 @@ public class BoardController {
     @Autowired
     private BoardService boardService;
 
+    @Autowired
+    private BoardRepository boardRepository;
+
     @PostMapping("/board/{id}/update")
     public String update(@PathVariable Integer id, BoardRequest.UpdateDTO updateDTO) {
         boardService.게시글수정하기(id, updateDTO); // body(DTO), where 데이터, session 보통 3개의 데이터를 넘겨줌
@@ -49,9 +52,15 @@ public class BoardController {
 
     @GetMapping("/board/{id}")
     public String detail(@PathVariable Integer id, Model model) { // request대신 Model로 담을수도 있다. 똑같은 것
-        Board board = boardService.상세보기(id);
+        Board board = boardService.상세보기(id); // 양방향 매핑을 해놨기 때문에 reply가 들어가있다.
         model.addAttribute("board", board);
         return "/board/detail";
+    }
+
+    @GetMapping("/test/board/{id}")
+    public @ResponseBody Board testDetail(@PathVariable Integer id) { // model에 담지않고 messageconverter 태우는 것
+        Board board = boardRepository.mFindByIdJoinRepliesInUser(1).get();
+        return board;
     }
 
     // localhost:8080?page=1&keyword=바나나

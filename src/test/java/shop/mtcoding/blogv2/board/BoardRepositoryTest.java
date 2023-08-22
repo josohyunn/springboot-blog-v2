@@ -48,6 +48,25 @@ public class BoardRepositoryTest {
     }
 
     @Test
+    public void mFindByIdJoinRepliesInUser_test() {
+        Board board = boardRepository.mFindByIdJoinRepliesInUser(1).get(); // optional이기 떄문에 .get()붙임
+        System.out.println("board : id : " + board.getId());
+        System.out.println("board : title: " + board.getTitle());
+        System.out.println("board : content : " + board.getContent());
+        System.out.println("board : createdAt : " + board.getCreatedAt());
+        System.out.println("===================================");
+        // System.out.println("board in user : id : " + board.getUser().getId()); 
+        // System.out.println("board in user : username : " + board.getUser().getUsername()); // getter를 때렸으니까 lazy로딩 됨
+
+        board.getReplies().stream().forEach(r -> {
+            System.out.println("board in replies : id : " + r.getId());
+            System.out.println("board in replies : comment : " + r.getComment());
+            System.out.println("board in replies in user : user : id : " + r.getUser().getUsername());
+        });
+
+    }
+
+    @Test
     public void findAll_paging_test() throws JsonProcessingException {
         Pageable pageable = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
         Page<Board> boardPG = boardRepository.findAll(pageable);

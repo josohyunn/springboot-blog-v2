@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import shop.mtcoding.blogv2._core.error.ex.MyException;
 import shop.mtcoding.blogv2._core.util.Script;
 
 // 요청받고 핵심로직 호출하고 핵심로직 위임하고 응답하기, 유효성 검사
@@ -56,9 +57,9 @@ public class UserController {
     @PostMapping("/login")
     public @ResponseBody String login(UserRequest.LoginDTO loginDTO) {
         User sessionUser = userService.로그인(loginDTO);
-        if (sessionUser == null) {
-            return Script.back("로그인 실패");
-        }
+        // if (sessionUser == null) { // user가 null이 될 수가 없으니까 이 if문은 필요없다. null이면 MyException으로 날라가기 때문에
+        //     throw new MyException("로그인 실패"); // 오류나면 return하는게 아니라 throw날린다. 이게 편하기 때문에
+        // }
 
         // 왜 request에 저장안하고 session에 저장하는가?
         // request는 응답이 되면 비어지고, session은 유지가 되기 때문
