@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,14 +52,18 @@ public class Board {
 
     // ManyToOne은 EAGER 전략이 디폴트
     // OneToMany는 LAZY 전략이 디폴트
-    @JsonIgnoreProperties({"board"}) // 무한 직렬화 막아줌. ajax쓸 때 사용. Reply내부의 board를 안주겠다.??
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY) // mappedBy = "board" : 나는 fk가 아니다(Reply 클래스의 Board 객체 변수명)
+    @JsonIgnoreProperties({ "board" }) // 무한 직렬화 막아줌. ajax쓸 때 사용. Reply내부의 board를 안주겠다.??
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // mappedBy = "board" : 나는 fk가
+                                                                                      // 아니다(Reply 클래스의 Board 객체 변수명).
+                                                                                      // cascade : 영속성 전이로, 게시글이 삭제되면 해당
+                                                                                      // 게시글에 있는 댓글까지 모두 삭제해버린다.
+                                                                                      // cascade가 없으면 터진다.
     private List<Reply> replies = new ArrayList<>(); // OneToMany : 반대방향으로 매핑(양방향 매핑)
     // db에 board에 fk가 들어가면 안됨
 
     @CreationTimestamp // insert될 때 시간을 넣어줌
     private Timestamp createdAt;
-
+  
     @Builder
     public Board(Integer id, String title, String content, User user, Timestamp createdAt) {
         this.id = id;

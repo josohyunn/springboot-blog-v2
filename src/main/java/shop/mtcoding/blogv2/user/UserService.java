@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import shop.mtcoding.blogv2._core.error.ex.MyApiException;
 import shop.mtcoding.blogv2._core.error.ex.MyException;
+import shop.mtcoding.blogv2._core.util.ApiUtil;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
 import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
@@ -77,5 +79,14 @@ public class UserService {
 
         return user;
     } // 3. flush
+
+    public User 중복체크(String username) {
+
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            throw new MyApiException("중복된 유저네임이 존재합니다.");
+        }        
+        return null;
+    }
 
 }

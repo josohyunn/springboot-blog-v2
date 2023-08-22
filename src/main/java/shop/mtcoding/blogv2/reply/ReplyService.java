@@ -1,12 +1,16 @@
 package shop.mtcoding.blogv2.reply;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import shop.mtcoding.blogv2._core.error.ex.MyApiException;
 import shop.mtcoding.blogv2.board.Board;
 import shop.mtcoding.blogv2.reply.ReplyRequest.SaveDTO;
+import shop.mtcoding.blogv2.user.User;
 
 @Service
 public class ReplyService {
@@ -15,25 +19,39 @@ public class ReplyService {
     private ReplyRepository replyRepository;
 
     @Transactional
-    public void 댓글등록(SaveDTO saveDTO) {
+    public void 댓글쓰기(SaveDTO saveDTO, Integer sessionId) {
+
+        // insert하는 방법 두가지
+
+        // 1. board id가 존재하는지 유무(조회해보고 있으면 insert하고 아니면 throw)
+        // 2. 이상한 요청 아니면
+
+        Board board = Board.builder().id(saveDTO.getBoardId()).build();
+        User user = User.builder().id(sessionId).build();
         Reply reply = Reply.builder()
-                .board(Board.builder().id(saveDTO.getBoardId()).build())
                 .comment(saveDTO.getComment())
+                .board(board)
+                .user(user)
                 .build();
-
-        replyRepository.mFindByIdJoinRepliesInUser(reply.getBoard().getId());
-        System.out.println("테스트 : boardid : " + reply.getBoard().getId());
-        System.out.println("테스트 : replycomment : " + reply.getComment());
-
-        // 지금 되는건 replyDTO를 넣었으니 그것만 된다. board와 user은 불러올 수 없음.
-        System.out.println("테스트 : boardtitle : " + reply.getBoard().getTitle()); // 여기 또한 null남.
-        System.out.println("테스트 : replyid : " + reply.getId());
-        System.out.println("테스트 : userid : " + reply.getUser().getId()); // 여기서 null남. user가 join 안된단소리
-        System.out.println("테스트 : username : " + reply.getUser().getUsername());
-
+        replyRepository.save(reply); // entity : Reply 객체. 이 때 영속화됨
     }
 
-    public void 댓글쓰기(SaveDTO saveDTO, int id) {
+    @Transactional
+    public void 댓글삭제(Integer id, int sessionUserId) {
+        // 권한 체크
+        Optional<Reply> replyOP = replyRepository.findById(id); // 댓글을 찾고
+
+        if (replyOP.isEmpty()) { // 댓글이 없으면
+            throw new MyApiException("삭제할 댓글이 없습니다.");
+        }
+
+        Reply reply = replyOP.get(); // 댓글이 없는건 throw로 처리했으니 무조건 있다.
+        if (reply.getUser().getId() != sessionUserId) {
+            throw new MyApiException("해당 댓글을 삭제할 권한이 없습니다.");
+        }
+
+        replyRepository.deleteById(id);
+
     }
 
 }

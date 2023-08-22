@@ -4,12 +4,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import shop.mtcoding.blogv2._core.error.ex.MyException;
+import shop.mtcoding.blogv2._core.util.ApiUtil;
 import shop.mtcoding.blogv2._core.util.Script;
 
 // 요청받고 핵심로직 호출하고 핵심로직 위임하고 응답하기, 유효성 검사
@@ -37,6 +40,12 @@ public class UserController {
     public String joinForm() {
 
         return "user/joinForm";
+    }
+
+    @GetMapping("/check")
+    public @ResponseBody ApiUtil<String> check(String username) {
+        userService.중복체크(username);
+        return new ApiUtil<String>(true, "사용할 수 있습니다.");
     }
 
     // M - V - C

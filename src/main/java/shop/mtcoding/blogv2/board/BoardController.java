@@ -46,7 +46,7 @@ public class BoardController {
         // return "redirect:/"; // index로 return 안하는 이유 : index.mustache에는 request에 있는
         // 것을 꺼내 쓰기 때문에
         // index하면 request에 담긴 데이터들이 없기 때문에 mustache에서 못써서 오류가 나는 것
-        // index하려면 setAttribute해서 데이터를 다 담아야 하는데, 이러면 쓸데없는 함수에 중복이 일어나서 redirect해주는게
+        // index하려면 setAttribute해서 데이터를 다 담아야 하는데, 이러면  쓸데없는 함수에 중복이 일어나서 redirect해주는게
         // 편하다.
     }
 
