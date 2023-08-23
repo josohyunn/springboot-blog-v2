@@ -1,14 +1,18 @@
 package shop.mtcoding.blogv2.user;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import shop.mtcoding.blogv2._core.error.ex.MyApiException;
 import shop.mtcoding.blogv2._core.error.ex.MyException;
-import shop.mtcoding.blogv2._core.util.ApiUtil;
+import shop.mtcoding.blogv2._core.vo.MyPath;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
 import shop.mtcoding.blogv2.user.UserRequest.UpdateDTO;
@@ -22,10 +26,25 @@ public class UserService {
 
     @Transactional // insert, update, delete할 때 붙여줌
     public void 회원가입(JoinDTO joinDTO) {
+
+        UUID uuid = UUID.randomUUID(); // 랜덤한 해시값을 만들어줌(충돌날 일 없음)
+        String fileName = uuid + "_" + joinDTO.getPic().getOriginalFilename(); // uuid와 pic 순서바뀌면 확장자 없어짐
+        System.out.println("fileName : " + fileName);
+
+        // 프로젝트 실행 파일 변경 -> blogv2-1.0.jar
+        // 해당 실행파일 경로에 images 폴더가 필요함
+        Path filePath = Paths.get(MyPath.IMG_PATH + fileName); // ./images/ 는 프로젝트 경로의 images폴더 안에(상대경로)
+        try {
+            Files.write(filePath, joinDTO.getPic().getBytes()); // 버퍼에 쓴다.
+        } catch (Exception e) {
+            throw new MyException(e.getMessage());
+        }
+
         User user = User.builder()
                 .username(joinDTO.getUsername())
                 .password(joinDTO.getPassword())
                 .email(joinDTO.getEmail())
+                .picUrl(fileName) // db에는 파일 이름만 저장하는게 좋다. 경로까지 저장해버리면 나중에 바뀌면 db를 다 바꿔야되기 때문에
                 .build();
         userRepository.save(user);
     }
@@ -85,7 +104,7 @@ public class UserService {
         User user = userRepository.findByUsername(username);
         if (user != null) {
             throw new MyApiException("중복된 유저네임이 존재합니다.");
-        }        
+        }
         return null;
     }
 

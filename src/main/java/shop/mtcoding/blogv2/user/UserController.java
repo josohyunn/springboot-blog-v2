@@ -50,7 +50,10 @@ public class UserController {
 
     // M - V - C
     @PostMapping("/join")
-    public String join(UserRequest.JoinDTO joinDTO) {
+    public @ResponseBody String join(UserRequest.JoinDTO joinDTO) {
+        // System.out.println(joinDTO.getPic().getOriginalFilename());
+        // System.out.println(joinDTO.getPic().getSize());
+        // System.out.println(joinDTO.getPic().getContentType());
         userService.회원가입(joinDTO);
 
         // userService.findById(3); // flush하는건 db에 넣기만 할 뿐 없어지는게 아니다. 1차캐시 됨
@@ -66,8 +69,9 @@ public class UserController {
     @PostMapping("/login")
     public @ResponseBody String login(UserRequest.LoginDTO loginDTO) {
         User sessionUser = userService.로그인(loginDTO);
-        // if (sessionUser == null) { // user가 null이 될 수가 없으니까 이 if문은 필요없다. null이면 MyException으로 날라가기 때문에
-        //     throw new MyException("로그인 실패"); // 오류나면 return하는게 아니라 throw날린다. 이게 편하기 때문에
+        // if (sessionUser == null) { // user가 null이 될 수가 없으니까 이 if문은 필요없다. null이면
+        // MyException으로 날라가기 때문에
+        // throw new MyException("로그인 실패"); // 오류나면 return하는게 아니라 throw날린다. 이게 편하기 때문에
         // }
 
         // 왜 request에 저장안하고 session에 저장하는가?
