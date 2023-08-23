@@ -10,37 +10,22 @@
 <div class="container p-5">
   <div class="card">
     <div class="card-header"><b>회원수정을 해주세요</b></div>
-    <div class="card-header d-flex justity-content-center" >
-      <img class="circle_avatar" src="/images/{{user.picUrl}}">
+    <div class="card-header d-flex justify-content-center">
+      <img id="preview" class="circle_avatar" src="/images/{{user.picUrl}}">
     </div>
     <div class="card-body">
-      <form action="/user/update" method="post">
+      <form action="/user/update" method="post" enctype="multipart/form-data">
         <div class="mb-3">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Enter username"
-            disabled
-            value="{{ user.username }}"
-          />
+          <input type="text" class="form-control" placeholder="Enter username" disabled value="{{ user.username }}" />
         </div>
         <div class="mb-3">
-          <input
-            type="password"
-            class="form-control"
-            placeholder="Enter password"
-            name="password"
-            required
-          />
+          <input type="password" class="form-control" placeholder="Enter password" name="password" required />
         </div>
         <div class="mb-3">
-          <input
-            type="email"
-            class="form-control"
-            placeholder="Enter email"
-            disabled
-            value="{{ user.email }}"
-          />
+          <input type="email" class="form-control" placeholder="Enter email" disabled value="{{ user.email }}" />
+        </div>
+        <div class="mb-3">
+          <input type="file" class="form-control" placeholder="Enter pic" onchange="changePic(event)" name="pic" />
         </div>
         <button type="submit" class="btn btn-primary form-control">
           회원가입수정
@@ -49,5 +34,26 @@
     </div>
   </div>
 </div>
+
+<script>
+  function changePic(e1) { 
+    // console.log(e1);
+
+    let f = e1.srcElement.files[0];
+    // console.log(f);
+    if(!f.type.match("image.*")) {
+      alert("이미지를 등록해주세요");
+      return;
+    }
+
+    let reader = new FileReader(); // 버퍼
+    reader.onload = function(e2) { // 콜백 함수(내가 실행하는 게 아니라 다른 어떤 이벤트가 끝났을 때 실행되는 함수)
+      let previewEl = document.querySelector("#preview");
+      previewEl.setAttribute("src", e2.target.result);
+    }
+
+    reader.readAsDataURL(f); // 파일 읽기. 이벤트 루프에 등록해놓고 main 빠져나옴(비동기). 다 읽으면 onload()를 실행 ↑
+  }
+</script>
 
 {{> layout/footer}}

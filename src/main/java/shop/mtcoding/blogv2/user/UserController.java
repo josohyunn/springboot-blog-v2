@@ -42,15 +42,15 @@ public class UserController {
         return "user/joinForm";
     }
 
-    @GetMapping("/check")
-    public @ResponseBody ApiUtil<String> check(String username) {
-        userService.중복체크(username);
-        return new ApiUtil<String>(true, "사용할 수 있습니다.");
+    @GetMapping("/api/check")
+    public @ResponseBody ApiUtil<String> check(String username) { // @ResponseBody를 안붙이면 view를 return하기 때문에 뷰 이름으로 해석되어 해당 뷰를 찾아서 렌더링 하려고 한다.
+        // @ResponseBody는 컨트롤러 메서드가 리턴하는 객체를 HTTP 응답의 본문(body)으로 변환해주는 역할을 한다.
+        return userService.중복체크(username);
     }
 
     // M - V - C
     @PostMapping("/join")
-    public @ResponseBody String join(UserRequest.JoinDTO joinDTO) {
+    public String join(UserRequest.JoinDTO joinDTO) {
         // System.out.println(joinDTO.getPic().getOriginalFilename());
         // System.out.println(joinDTO.getPic().getSize());
         // System.out.println(joinDTO.getPic().getContentType());

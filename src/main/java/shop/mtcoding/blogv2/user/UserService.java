@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import shop.mtcoding.blogv2._core.error.ex.MyApiException;
 import shop.mtcoding.blogv2._core.error.ex.MyException;
+import shop.mtcoding.blogv2._core.util.ApiUtil;
 import shop.mtcoding.blogv2._core.vo.MyPath;
 import shop.mtcoding.blogv2.user.UserRequest.JoinDTO;
 import shop.mtcoding.blogv2.user.UserRequest.LoginDTO;
@@ -26,7 +27,7 @@ public class UserService {
 
     @Transactional // insert, update, delete할 때 붙여줌
     public void 회원가입(JoinDTO joinDTO) {
-
+        // util에 FileWrite.save()로 따로 함수로 빼놓기
         UUID uuid = UUID.randomUUID(); // 랜덤한 해시값을 만들어줌(충돌날 일 없음)
         String fileName = uuid + "_" + joinDTO.getPic().getOriginalFilename(); // uuid와 pic 순서바뀌면 확장자 없어짐
         System.out.println("fileName : " + fileName);
@@ -90,22 +91,37 @@ public class UserService {
 
     @Transactional // 안붙이면 flush가 안된다.
     public User 회원수정(UpdateDTO updateDTO, Integer id) {
+
+        UUID uuid = UUID.randomUUID(); // 랜덤한 해시값을 만들어줌(충돌날 일 없음)
+        String fileName = uuid + "_" + updateDTO.getPic().getOriginalFilename(); // uuid와 pic 순서바뀌면 확장자 없어짐
+        System.out.println("fileName : " + fileName);
+
+        // 프로젝트 실행 파일 변경 -> blogv2-1.0.jar
+        // 해당 실행파일 경로에 images 폴더가 필요함
+        Path filePath = Paths.get(MyPath.IMG_PATH + fileName); // ./images/ 는 프로젝트 경로의 images폴더 안에(상대경로)
+        try {
+            Files.write(filePath, updateDTO.getPic().getBytes()); // 버퍼에 쓴다.
+        } catch (Exception e) {
+            throw new MyException(e.getMessage());
+        }
+        
         // 1. 조회(영속화)
         User user = userRepository.findById(id).get();
 
         // 2. 변경
         user.setPassword(updateDTO.getPassword());
+        user.setPicUrl(fileName);
 
         return user;
     } // 3. flush
 
-    public User 중복체크(String username) {
+    public ApiUtil<String> 중복체크(String username) {
 
         User user = userRepository.findByUsername(username);
         if (user != null) {
             throw new MyApiException("중복된 유저네임이 존재합니다.");
         }
-        return null;
+        return new ApiUtil<String>(true, "사용할 수 있습니다.");
     }
 
 }
