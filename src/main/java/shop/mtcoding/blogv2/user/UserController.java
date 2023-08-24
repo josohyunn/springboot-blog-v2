@@ -43,14 +43,15 @@ public class UserController {
     }
 
     @GetMapping("/api/check")
-    public @ResponseBody ApiUtil<String> check(String username) { // @ResponseBody를 안붙이면 view를 return하기 때문에 뷰 이름으로 해석되어 해당 뷰를 찾아서 렌더링 하려고 한다.
+    public @ResponseBody ApiUtil<String> check(String username) { // @ResponseBody를 안붙이면 view를 return하기 때문에 뷰 이름으로 해석되어
+                                                                  // 해당 뷰를 찾아서 렌더링 하려고 한다.
         // @ResponseBody는 컨트롤러 메서드가 리턴하는 객체를 HTTP 응답의 본문(body)으로 변환해주는 역할을 한다.
         return userService.중복체크(username);
     }
 
     // M - V - C
     @PostMapping("/join")
-    public String join(UserRequest.JoinDTO joinDTO) {
+    public String join(UserRequest.JoinDTO joinDTO) { // 공백, null 막기 -> null은 mustache에서 required하기/공백은 따로 막아야됨
         // System.out.println(joinDTO.getPic().getOriginalFilename());
         // System.out.println(joinDTO.getPic().getSize());
         // System.out.println(joinDTO.getPic().getContentType());

@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -41,6 +42,8 @@ public class Board {
 
     @Column(nullable = false, length = 100)
     private String title;
+
+    @Lob // 엄청 큰 문자 대형 객체
     @Column(nullable = true, length = 10000)
     private String content;
 
@@ -63,7 +66,7 @@ public class Board {
 
     @CreationTimestamp // insert될 때 시간을 넣어줌
     private Timestamp createdAt;
-  
+
     @Builder
     public Board(Integer id, String title, String content, User user, Timestamp createdAt) {
         this.id = id;

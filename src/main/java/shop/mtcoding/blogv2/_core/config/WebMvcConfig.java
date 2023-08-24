@@ -1,9 +1,12 @@
 package shop.mtcoding.blogv2._core.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
+
+import shop.mtcoding.blogv2._core.interceptor.LoginInterceptor;
 
 @Configuration // 설정 파일을 메모리에 띄움
 public class WebMvcConfig implements WebMvcConfigurer { // 기본 외부 폴더인 static을 다른 폴더로 바꿔주기 위한 설정. Web.xml파일을 오버라이드 함
@@ -17,4 +20,15 @@ public class WebMvcConfig implements WebMvcConfigurer { // 기본 외부 폴더�
                 .resourceChain(true) // 안중요
                 .addResolver(new PathResourceResolver()); // 안중요
     }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) { // 인증 체크
+        registry.addInterceptor(new LoginInterceptor())
+                .addPathPatterns("/board/**") // /board/뒤에 오는 주소들은 전부 막는다.
+                .addPathPatterns("/user/update", "/user/updateForm")
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/check")
+                .excludePathPatterns("/board/{id:[0-9]+}"); // 제외시킨다.
+    }
+
 }
